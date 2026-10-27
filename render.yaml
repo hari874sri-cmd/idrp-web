@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: reroute-ai-backend
+    env: python
+    region: oregon
+    plan: starter
+    buildCommand: |
+      pip install -r backend/requirements.txt
+      python backend/manage.py migrate --noinput
+      python backend/manage.py collectstatic --noinput
+    startCommand: gunicorn config.wsgi:application --log-file -
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        sync: false
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: "*"
+      - key: CORS_ALLOW_ALL_ORIGINS
+        value: "true"
+      - key: DB_ENGINE
+        value: "postgresql"
+      - key: AI_PROVIDER
+        value: "demo"
+      - key: VITE_API_BASE_URL
+        value: "/api/v1"
+    # Render automatically creates a PostgreSQL instance for this service
+    # and injects DATABASE_URL – no manual config needed.
+
+  - type: static
+    name: reroute-ai-frontend
+    region: oregon
+    plan: starter
+    buildCommand: |
+      cd frontend
+      npm ci
+      npm run build
+    publishPath: frontend/dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        # The backend URL will be inserted by Render after deployment.
+        # Example: https://reroute-ai-backend.onrender.com/api/v1
+        value: "/api/v1"
