@@ -1,4 +1,6 @@
+
 services:
+  # Django backend
   - type: web
     name: reroute-ai-backend
     env: python
@@ -8,34 +10,33 @@ services:
       pip install -r backend/requirements.txt
       python backend/manage.py migrate --noinput
       python backend/manage.py collectstatic --noinput
-    startCommand: gunicorn config.wsgi:application --log-file -
+    startCommand: cd backend && gunicorn config.wsgi:application --log-file -
     envVars:
       - key: DJANGO_SECRET_KEY
-        sync: false               # set a random value in Render later (do NOT commit a real secret)
+        sync: false
       - key: DJANGO_DEBUG
         value: "False"
       - key: DJANGO_ALLOWED_HOSTS
-        value: "*"
+        value: "reroute-ai-backend.onrender.com"
       - key: CORS_ALLOW_ALL_ORIGINS
         value: "true"
       - key: DB_ENGINE
         value: "postgresql"
       - key: AI_PROVIDER
         value: "demo"
-      - key: VITE_API_BASE_URL
-        value: "/api/v1"
-      # Render automatically creates a PostgreSQL instance and injects DATABASE_URL
+      - key: PYTHON_VERSION
+        value: "3.12.0"
 
-  - type: static_site                     # ← **fixed**
+  # Vite frontend
+  - type: web
     name: reroute-ai-frontend
-    region: oregon
-    plan: starter
-    buildCommand: |
-      cd frontend
-      npm ci
-      npm run build
-    publishPath: frontend/dist
+    runtime: static
+    buildCommand: cd frontend && npm ci && npm run build
+    staticPublishPath: frontend/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
     envVars:
       - key: VITE_API_BASE_URL
-        # Render will replace this with the full backend URL after deployment.
-        value: "/api/v1"
+        value: https://reroute-ai-backend.onrender.com/api/v1
