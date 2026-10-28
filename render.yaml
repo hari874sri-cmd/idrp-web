@@ -9,6 +9,8 @@ services:
     buildCommand: pip install -r backend/requirements.txt
     startCommand: cd backend && python manage.py migrate --noinput && gunicorn config.wsgi:application --log-file -
     envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.0"
       - key: DJANGO_SECRET_KEY
         sync: false
       - key: DJANGO_DEBUG
