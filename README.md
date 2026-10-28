@@ -317,3 +317,5 @@ If an API key is omitted or a network quota error occurs, the provider factory s
 - [x] 100% automated test suite passing.
 - [x] Production build verified with Vite and TypeScript.
 
+#   i d r p - w e b  
+ 
