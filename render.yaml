@@ -11,7 +11,7 @@ services:
     startCommand: gunicorn config.wsgi:application --log-file -
     envVars:
       - key: DJANGO_SECRET_KEY
-        sync: false
+        sync: false               # set a random value in Render later (do NOT commit a real secret)
       - key: DJANGO_DEBUG
         value: "False"
       - key: DJANGO_ALLOWED_HOSTS
@@ -24,7 +24,7 @@ services:
         value: "demo"
       - key: VITE_API_BASE_URL
         value: "/api/v1"
-      # Render will automatically create a PostgreSQL instance and inject DATABASE_URL
+      # Render automatically creates a PostgreSQL instance and injects DATABASE_URL
 
   - type: static_site                     # ← **fixed**
     name: reroute-ai-frontend
