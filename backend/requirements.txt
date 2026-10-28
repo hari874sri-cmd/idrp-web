@@ -1,0 +1,19 @@
+# Core Django stack
+Django>=4.2,<5.0
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
+drf-spectacular
+
+# File handling
+Pillow
+
+# AI / ML
+scikit-learn
+
+# Production server & static files
+gunicorn
+whitenoise
+
+# Environment variables helper
+python-dotenv
